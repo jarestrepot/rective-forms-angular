@@ -65,9 +65,9 @@
       </div>
 
 
-      <div class="row">
+      <div class="row" >
         <div class="col">
-          <button class="btn btn-primary float-end" type="submit">
+          <button *ngIf="myForm.valid" class="btn btn-primary float-end" type="submit">
             Crear
           </button>
         </div>
@@ -99,4 +99,4 @@
 <pre>{{ myForm.value.password | json }}</pre>
 
 <h5>Confirmar</h5>
-<pre>{{ myForm.value.passwordConfirmation | json }}</pre>
+<pre>{{ myForm.controls['passwordConfirmation'].errors | json }}</pre>

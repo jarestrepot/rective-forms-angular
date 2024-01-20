@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { FormArray, FormControl, FormGroup, ValidationErrors } from '@angular/forms';
+import { AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors } from '@angular/forms';
 
 @Injectable({providedIn: 'root'})
 export class ValidatorsService {
@@ -8,7 +8,7 @@ export class ValidatorsService {
   public emailPattern: string = "^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$";
 
   public cantBeStrider = ( { value }: FormControl ): ValidationErrors | null => {
-
+    // Los validadores siempre devuelven el error del validador o null si está bien
     const valueControl: string = value.trim().toLowerCase();
     // Petición si el username existe o no de un backend.
     if ( valueControl === 'strider' ) {
@@ -18,7 +18,6 @@ export class ValidatorsService {
       }
     }
     return null
-
   }
 
   public isValidField( field: string, form: FormGroup ): boolean | null{
@@ -50,6 +49,21 @@ export class ValidatorsService {
       }
     }
     return ''
+  }
+
+  isFieldOneEqualFieldTwo(fieldOne: string, fieldTwo: string) {
+    return ( formGroup: AbstractControl ): ValidationErrors | null => {
+
+      const fieldValueOne:string = formGroup.get(fieldOne)?.value;
+      const fieldValueTwo:string = formGroup.get(fieldTwo)?.value;
+
+      if( fieldValueOne !== fieldValueTwo ) {
+        formGroup.get(fieldTwo)?.setErrors({ notEqual: true });
+        return { notEqual: true };
+      }
+      formGroup.get(fieldTwo)?.setErrors( null );
+      return null;
+    }
   }
 
 
