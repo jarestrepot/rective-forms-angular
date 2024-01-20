@@ -1,5 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ValidatorsService } from 'src/app/shared/service/validators.service';
 
 interface Person {
   gender: string,
@@ -26,7 +27,9 @@ export class SwitchesPageComponent implements OnInit {
     wantNotifications: false
   }
 
-  constructor( private fb: FormBuilder){}
+  constructor( private fb: FormBuilder,
+    private validatorsService: ValidatorsService
+  ){}
 
   ngOnInit(): void {
     this.myForm.reset( this.mockPerson );
@@ -46,7 +49,7 @@ export class SwitchesPageComponent implements OnInit {
     return Boolean( this.myForm.controls[fieldRadius].errors );
   }
 
-  isValidField( field:string ):boolean {
-    return Boolean( this.myForm.touched && this.myForm.controls[ field ].errors );
+  isValidField( field:string ):boolean | null {
+    return this.validatorsService.isValidField( field, this.myForm );
   }
 }

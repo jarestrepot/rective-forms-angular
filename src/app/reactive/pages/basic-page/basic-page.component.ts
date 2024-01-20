@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators , FormGroup } from '@angular/forms';
 import { validatorsHelpers } from '../../helpers/validators.helper';
+import { ValidatorsService } from 'src/app/shared/service/validators.service';
 
 interface BasicForm {
   name:string;
@@ -34,39 +35,18 @@ export class BasicPageComponent implements OnInit {
   })
 
   // Form Builder
-  constructor( private fb: FormBuilder ){}
+  constructor( private fb: FormBuilder, private validatorsService: ValidatorsService ){}
 
   ngOnInit(): void {
     // this.myForm.reset( rtx5090 );
   }
 
   isValidField( field:string ):boolean | null {
-    return this.myForm.controls[field].errors && this.myForm.controls[field].touched
+    return this.validatorsService.isValidField( field, this.myForm );
   }
 
   getFieldError( field:string ):string | null{
-    if (!this.myForm.controls[field] && !this.myForm.controls[field].errors ) return null;
-
-    const errors = this.myForm.controls[field].errors || {};
-
-    const mapErrors = {
-      required : 'This is field is requied',
-      minLength: 'This field requires a minimum of 3 letters',
-      min: `Minimum 0 characters`
-    }
-    for ( const key of Object.keys(errors) ) {
-      switch( key ){
-        case 'required' : return mapErrors.required
-          break
-        case 'minlength' : return mapErrors.minLength
-          break
-        case 'min': return mapErrors.min
-          break
-        default : return ''
-          break
-      }
-    }
-    return ''
+    return this.validatorsService.getFieldError( field, this.myForm );
   }
 
   onSave():void{

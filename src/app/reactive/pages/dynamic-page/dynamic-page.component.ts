@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { validatorsHelpers } from '../../helpers/validators.helper';
+import { ValidatorsService } from 'src/app/shared/service/validators.service';
 
 @Component({
   templateUrl: './dynamic-page.component.html',
@@ -19,40 +20,22 @@ export class DynamicPageComponent {
 
   public newFavorite: FormControl = new FormControl( '', validatorsHelpers.minLength );
 
-  constructor( private fb:FormBuilder ){}
+  constructor( private fb:FormBuilder, private validatorsService: ValidatorsService){}
 
   get favoriteGame(){
     return this.myForm.get('favoriteGames') as FormArray;
   }
 
   isValidField( field: string ): boolean | null {
-    return this.myForm.controls[field].errors && this.myForm.controls[field].touched
+    return this.validatorsService.isValidField( field, this.myForm );
   }
 
   isValidFieldInArray(formArray: FormArray, index: number) {
-    return formArray.controls[index].errors
-      && formArray.controls[index].touched
+    return this.validatorsService.isValidFieldInArray( formArray, index );
   }
 
   getFieldError( field: string ): string | null {
-
-    if (!this.myForm.controls[field] && !this.myForm.controls[field].errors) return null;
-
-    const errors = this.myForm.controls[field].errors || {};
-
-    for (const key of Object.keys(errors)) {
-      switch (key) {
-        case 'required': return 'This is field is requied'
-          break
-        case 'minlength': return 'This field requires a minimum of 3 letters'
-          break
-        case 'min': return `Minimum 0 characters`
-          break
-        default: return ''
-          break
-      }
-    }
-    return ''
+    return this.validatorsService.getFieldError(field, this.myForm );
   }
 
   onDeleteFavorite( index:number ):void {
